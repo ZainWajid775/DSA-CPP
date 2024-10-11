@@ -1,10 +1,8 @@
 #include <iostream>
 using namespace std;
 
-//A CHANGE IN THIS FILE TEST 
-//Test 2
-//Resolve
-//End
+//COMMENTS REMOVED 
+
 void swap(int* a , int* b)
 {
     int temp = *a;
