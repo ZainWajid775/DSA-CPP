@@ -1,8 +1,6 @@
 #include <iostream>
 using namespace std;
 
-//COMMENTS REMOVED 
-
 void swap(int* a , int* b)
 {
     int temp = *a;
