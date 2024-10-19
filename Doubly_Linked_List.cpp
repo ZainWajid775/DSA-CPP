@@ -1,213 +1,207 @@
 #include <iostream>
 using namespace std;
-
-struct node
+struct Node
 {
-    int data;
-    //Contains pointer to next and previous node in list
-    node* next;
-    node* prev;
+    int val;
+    Node* next;
+    Node* prev;
 
-    node(int val) : data(val) , next(nullptr) , prev(nullptr) {}
+    Node(int value) : next(nullptr) , prev(nullptr) , val(value) {}
 };
 
-class doubly_linked_list
+class Doubly_Linked_List
 {
-    //Head and tail pointers are used 
     private:
-    node* head;
-    node* tail;
+    Node* head;
+    Node* tail;
 
     public:
-    doubly_linked_list() : head(nullptr), tail(nullptr) {}  
+    Doubly_Linked_List() : head(nullptr) , tail(nullptr) {}
 
-    void insert_at_start(int val)
+    bool is_empty()
     {
-        node* new_node = new node(val);
-        new_node->prev = nullptr;
+        return head == nullptr;
+    }
 
-        //If the list is not empty, new node points to the previous head and vice versa and head now points to the new node
-        if(head != nullptr)
+    void display(char direction)
+    {   
+        Node* temp = (direction == 'f') ? head : tail;
+
+        int count = 0;
+        while(temp != nullptr)
         {
-            head->prev = new_node;
+            cout << "Index : " << count++ << " Value : " << temp->val << endl;
+            temp = (direction == 'f') ? temp->next : temp->prev;
+        }
+
+    }
+
+    void insertion(int value , int index)
+    {
+        Node* new_node = new Node(value);
+
+        //List empty 
+        if(is_empty())
+        {
+            head = tail = new_node;
+
+            cout << "Node inserted at start due to list being empty\n";
+            return;
+        }
+
+        //Insertion at start
+        else if(index == 0)
+        {
             new_node->next = head;
-
-        }
-        //If the list is empty, both point to the new node
-        else
-        {
-            tail = new_node;
-            new_node->next = nullptr;
-        }
-
-        //Regardless of the no of nodes, the head will always point to the new node if it is inserted at the start
-        head = new_node;
-    }
-
-    void insert_at_end(int val)
-    {
-        node* new_node = new node(val);
-        new_node->next = nullptr;
-        //If the list is not empty, new node points to the previous tail
-        if(tail != nullptr)
-        {
-            tail->next = new_node;
-            new_node->prev = tail;
-        }
-        //If the list is empty both point to the new node
-        else
-        {
+            head->prev = new_node;
             head = new_node;
-            new_node->prev = nullptr;
-        }
-        tail = new_node;
-    }
 
-    void insert_at_index(int index , int val)
-    {
-        if(index == 0)
-        {
-            insert_at_start(val);
+            cout << "Node inserted at start\n";
             return;
         }
         else
         {
-            node* temp = head;
-            int node_count = 0;
-            //Check if the index is valid and traverse to the node before the specified index
-            for(int i = 0 ; i < index - 1 && temp->next != nullptr ; i++)
+            Node* temp = head;
+            for(int i = 0 ; i < index - 1 ; i++)
             {
                 temp = temp->next;
-                node_count++;
+                if(temp == nullptr)
+                {
+                    cout << "Index out of range\n";
+                    delete new_node;
+                    return;
+                }
             }
 
-            //It the node is to be inserted at last index, the node must h=be pointing to a null pointer
-            if(temp->next == nullptr && node_count == index - 1)
-            {
-                insert_at_end(val);
-            }
+            new_node->next = temp->next;
+            new_node->prev = temp;
 
-            //else the specified index should be less the the number of nodes
-            else if(index < node_count)
+            if(temp->next)
             {
-                node* new_node = new node(val);
-                new_node->prev = temp;
-                new_node->next = temp->next;
-                temp->next = new_node;
-                temp = temp->next;
-                temp->prev = new_node;
+                temp->next->prev = new_node;
             }
             else
             {
-                cout << "Invalid index\n";
+                tail = new_node;
             }
 
+            temp->next = new_node;
+            cout << "Node inserted\n";
+            return;
         }
-        
+
     }
 
-    void delete_at_index(int index)
-    {
-        if(index < 0)
+    void deletion(int index)
+    {   
+        //List empty
+        if(is_empty())
         {
-            cout << "Invalid index\n";
+            cout << "List empty\n";
+            return;
         }
-        else if(index == 0)
+
+        Node* temp = head;
+
+        //First node deletion
+        if(index == 0)
         {
-            node* temp = head;
-            head = head->next;
-            head->prev = nullptr;
-            delete temp;
-        }
-        else
-        {
-            node* temp = head;
-            //Traverse to the node before the one to be deleted
-            for(int i = 0 ; i < index && temp != nullptr; i++)
+            //1 node only
+            if(head == tail)
             {
-                temp = temp->next;
+                delete temp;
+                cout << "Node deleted list empty\n";
+                return;
             }
-            //Index out of bounds
+            //More than 1 node
+            else
+            {
+                head = head->next;
+                head->prev = nullptr;
+                delete temp;
+                cout << "First node deleted\n";
+                return;
+            }
+        }
+
+        for(int i = 0 ; i < index ; i++)
+        {
+            temp = temp->next;
+
             if(temp == nullptr)
             {
                 cout << "Invalid index\n";
-            }
-            else
-            {
-                //If the list has more than 1 node
-                if(temp->prev != nullptr)
-                {
-                    temp->prev->next = temp->next;
-                }
-                //If the list has first node deleted
-                else
-                {
-                    head = temp->next;
-                }
-
-                //If the list has only 1 node
-                if(temp->next != nullptr)
-                {
-                    temp->next->prev = temp->prev;
-                }
-                //If the list has last node deleted
-                else
-                {
-                    tail = temp->next;
-                }
                 delete temp;
+                return;
             }
         }
+
+        temp->prev->next = temp->next;
+
+        //Middle node deletion
+        if(temp->next)
+        {
+            temp->next->prev = temp->prev;
+        }
+
+        delete temp;
+        cout << "Node deleted\n";
+        return;
     }
 
-    //Printing from the start utilises the head and next to traverse the list
-    void print_from_start()
+    int search(int value)
     {
-        if(head != nullptr)
+        Node* temp = head;
+        int index = 0;
+
+        while(temp != nullptr)
         {
-            node* temp = head;
-            int count = 0;
-            while(temp != nullptr)
+            if(temp->val == value)
             {
-                cout << "Index : " << count << " Data : " << temp->data << endl;
-                count ++;
-                temp = temp->next; 
+                return index;
             }
+            temp = temp->next;
+            index++;
         }
-        else
-        {
-            cout << "Empty list\n";
-        }
+
+        cout << "Value not found\n";
+        return -1;
     }
 
-    //Printing from the end utilises the prev and tail for traversing the list
-    void print_from_end()
+    void update(int value , int index)
     {
-        if(head != nullptr)
+        Node* temp = head;
+
+        for(int i = 0 ; i < index ; i++)
         {
-            node* temp = tail;
-            int count = 0;
-            while(temp != nullptr)
+            if(temp == nullptr)
             {
-                cout << "Reverse Index : " << count << " Data : " << temp->data << endl;
-                count ++;
-                temp = temp->prev;
+                cout << "Invalid index\n";
+                delete temp;
+                return;
             }
+            temp = temp->next;
         }
-        else
+
+        if(temp == nullptr)
         {
-            cout << "Empty list\n";
+            cout << "Invalid Index\n";
+            return;
         }
+        
+        temp->val = value;
+        cout << "Value Updated\n";
     }
 };
 
 int main()
 {
-    doubly_linked_list list;
-    list.insert_at_end(2);
-    list.insert_at_end(3);
-    list.insert_at_start(1);
-    list.insert_at_index(3 , 4);
-    list.delete_at_index(5);
-    list.print_from_start();
+    Doubly_Linked_List list;
+    list.insertion(1,0);
+    list.insertion(2,1);
+    list.insertion(3,2);
+    list.insertion(4,3);
+    list.insertion(5,4);
+    list.update(10 , 5);
+    list.display('f');
 }
