@@ -1,28 +1,33 @@
 #include <iostream>
 using namespace std;
 
-void insertion_sort(int arr[], int n) 
+void insertion_sort(int arr[] , int size)
 {
-    int key , j;
-
-    for(int i = 1 ; i <= n-1 ; i++)
+    //Outer loop starts from one as it has to compare ith index with ones below it
+    for(int i = 1 ; i < size ; i++)
     {
-        key = arr[i];       //Element to be inserted
-        j = i-1;
+        //Store ith index
+        int key = arr[i];
 
-        //While the intger being compared is greater than the previous, move the integers to the right and insert the one being compared at its correct position
-        while(j >= 0 && arr[j] > key)
+        //J runs backwards comparing indexes below key
+        int j = i - 1;
+
+        while(j >= 0 && arr[j] < key)
         {
-            arr[j+1] = arr[j];
+            arr[j + 1] = arr[j];
             j--;
         }
-        arr[j+1] = key; 
+
+        //Insert value at its correct index in that loop
+        arr[j + 1] = key;
+
     }
 }
 
-void print(int arr[], int size) 
+void display(int arr[] , int size)
 {
-    for (int i = 0; i < size; i++)
+    cout << "Array : ";
+    for(int i = 0 ; i < size ; i++)
     {
         cout << arr[i] << " ";
     }
@@ -31,8 +36,9 @@ void print(int arr[], int size)
 
 int main()
 {
-    int arr[] = {5,4,3,2,1};
-    insertion_sort(arr , 5);
-    print(arr , 5);
-}
+    int arr[] = {1,2,3,4,5};
+    int size = sizeof(arr) / sizeof(arr[0]);
 
+    insertion_sort(arr, size);
+    display(arr , size);
+}
