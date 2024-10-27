@@ -226,10 +226,10 @@ class Stack_Linked_List
 int main()
 {
     Stack_Linked_List stk;
-    stk.push(10);
-    stk.push(9);
+    stk.push(7);
     stk.push(8);
-    stk.sort();
+    stk.push(9);
+    stk.insert_sorted(0);
     stk.display();
 
 }
