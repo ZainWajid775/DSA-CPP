@@ -1,197 +1,223 @@
 #include <iostream>
+
 using namespace std;
 
-struct Node {
-    int key;
+struct Node
+{
+    int data;
     int height;
     Node* left;
     Node* right;
 
-    Node(int val) : key(val), height(1), left(nullptr), right(nullptr) {}
+    Node(int val) : data(val) , height(1) , left(nullptr) , right(nullptr) {}
 };
 
-// Function to get the height of a node
-int height(Node* node) {
-    return node ? node->height : 0;
+int height(Node* node)
+{
+    if(node != nullptr)
+    {
+        return node->height;
+    }
+    return 0;
 }
 
-// Function to calculate the balance factor
-int getBalance(Node* node) {
-    return node ? height(node->left) - height(node->right) : 0;
+int balance_factor(Node* node)
+{
+    if(node != nullptr)
+    {
+        return (height(node->left) - height(node->right));
+    }
+    return 0;
 }
 
-// Function to perform a right rotation
-Node* rightRotate(Node* y) {
-    Node* x = y->left;
-    Node* T2 = x->right;
+Node* right_rotate(Node* node)
+{
+    Node* new_root = node->left;
+    Node* temp = new_root->right;
 
-    // Perform rotation
-    x->right = y;
-    y->left = T2;
+    new_root->right = node;
+    node->left = temp;
 
-    // Update heights
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
+    node->height = max(height(node->left) , height(node->right)) + 1;
+    new_root->height = max(height(new_root->left) , height(new_root->right)) + 1;
 
-    return x; // New root
+    return new_root;
 }
 
-// Function to perform a left rotation
-Node* leftRotate(Node* x) {
-    Node* y = x->right;
-    Node* T2 = y->left;
+Node* left_rotate(Node* node)
+{
+    Node* new_root = node->right;
+    Node* temp = node->left;
 
-    // Perform rotation
-    y->left = x;
-    x->right = T2;
+    new_root->left = node;
+    node->right = temp;
 
-    // Update heights
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
-
-    return y; // New root
+    node->height = max(height(node->left) , height(node->right)) + 1;
+    new_root->height = max(height(new_root->left) , height(new_root->right)) + 1;
+    
+    return new_root;
 }
 
-// Function to insert a key into the AVL Tree
-Node* insert(Node* node, int key) {
-    if (!node) // Base case
-        return new Node(key);
-
-    // Perform normal BST insertion
-    if (key < node->key)
-        node->left = insert(node->left, key);
-    else if (key > node->key)
-        node->right = insert(node->right, key);
-    else // Duplicate keys are not allowed
-        return node;
-
-    // Update height of this ancestor node
-    node->height = 1 + max(height(node->left), height(node->right));
-
-    // Get the balance factor to check for imbalance
-    int balance = getBalance(node);
-
-    // Left Left Case
-    if (balance > 1 && key < node->left->key)
-        return rightRotate(node);
-
-    // Right Right Case
-    if (balance < -1 && key > node->right->key)
-        return leftRotate(node);
-
-    // Left Right Case
-    if (balance > 1 && key > node->left->key) {
-        node->left = leftRotate(node->left);
-        return rightRotate(node);
+Node* insert(Node* root , int val)
+{
+    if(root == nullptr)
+    {
+        return new Node(val);
     }
 
-    // Right Left Case
-    if (balance < -1 && key < node->right->key) {
-        node->right = rightRotate(node->right);
-        return leftRotate(node);
+    if(val < root->data)
+    {
+        root->left = insert(root->left , val);
     }
-
-    return node; // Return unchanged node pointer
-}
-
-// Function to find the node with the smallest key value
-Node* minValueNode(Node* node) {
-    Node* current = node;
-    while (current->left)
-        current = current->left;
-    return current;
-}
-
-// Function to delete a node
-Node* deleteNode(Node* root, int key) {
-    if (!root)
+    else if(val > root->data)
+    {
+        root->right = insert(root->right , val);
+    }
+    else
+    {
         return root;
-
-    // Perform standard BST delete
-    if (key < root->key)
-        root->left = deleteNode(root->left, key);
-    else if (key > root->key)
-        root->right = deleteNode(root->right, key);
-    else {
-        // Node with one child or no child
-        if (!root->left || !root->right) {
-            Node* temp = root->left ? root->left : root->right;
-            if (!temp) { // No child case
-                temp = root;
-                root = nullptr;
-            } else // One child case
-                *root = *temp;
-
-            delete temp;
-        } else {
-            // Node with two children
-            Node* temp = minValueNode(root->right);
-            root->key = temp->key;
-            root->right = deleteNode(root->right, temp->key);
-        }
     }
 
-    if (!root)
-        return root;
+    root->height = max(height(root->left) , height(root->right)) + 1;
 
-    // Update height
-    root->height = 1 + max(height(root->left), height(root->right));
+    int bf = balance_factor(root);
 
-    // Get balance factor
-    int balance = getBalance(root);
-
-    // Left Left Case
-    if (balance > 1 && getBalance(root->left) >= 0)
-        return rightRotate(root);
-
-    // Left Right Case
-    if (balance > 1 && getBalance(root->left) < 0) {
-        root->left = leftRotate(root->left);
-        return rightRotate(root);
+    if(bf > 1 && val < root->left->data)
+    {
+        return right_rotate(root);
     }
 
-    // Right Right Case
-    if (balance < -1 && getBalance(root->right) <= 0)
-        return leftRotate(root);
+    if(bf > 1 && val > root->left->data)
+    {
+        root->left = left_rotate(root->left);
+        return right_rotate(root);
+    }
 
-    // Right Left Case
-    if (balance < -1 && getBalance(root->right) > 0) {
-        root->right = rightRotate(root->right);
-        return leftRotate(root);
+    if(bf < -1 && val > root->right->data)
+    {
+        return left_rotate(root);
+    }
+
+    if(bf < -1 && val < root->right->data)
+    {
+        root->right = right_rotate(root->right);
+        return left_rotate(root);
     }
 
     return root;
 }
 
-// Function to print the tree in-order
-void inOrder(Node* root) {
-    if (root) {
-        inOrder(root->left);
-        cout << root->key << " ";
-        inOrder(root->right);
+Node* min(Node* node)
+{
+    Node* current = node;
+
+    while(current->left)
+    {
+        current = current->left;
+    }
+
+    return current;
+}
+
+Node* del_node(Node* root , int key)
+{
+    if(root == nullptr)
+    {
+        return root;
+    }
+
+    if(key < root->data)
+    {
+        root->left = del_node(root->left , key);
+    }
+    else if(key > root->data)
+    {
+        root->right = del_node(root->right , key);
+    }
+    else
+    {
+        if(!root->left || !root->right)
+        {
+            Node* temp = root->left ? root->left : root->right;
+            delete root;
+            return temp;
+        }
+        else
+        {
+            Node* temp = min(root->right);
+            root->data = temp->data;
+            root->right = del_node(root->right , temp->data);
+        }
+    }
+
+    if(!root)
+    {
+        return nullptr;
+    }
+
+    root->height = 1 + max(height(root->left) , height(root->right));
+    int bf = balance_factor(root);
+
+    if(bf > 1 && balance_factor(root->left) >= 0)
+    {
+        return right_rotate(root);
+    }
+    if(bf > 1 && balance_factor(root->left) < 0)
+    {
+        root->left = left_rotate(root->left);
+        return right_rotate(root);
+    }
+    if(bf < -1 && balance_factor(root->right) <= 0)
+    {
+        return right_rotate(root);
+    }
+    if(bf < -1 && balance_factor(root->right) > 0)
+    {
+        root->right = right_rotate(root->right);
+        return left_rotate(root);
+    }
+
+    return root;
+}
+
+void bfs(Node* source)
+{
+    if(source == nullptr)
+    {
+        return;
+    }
+
+    queue<Node*>q;
+    q.push(source);
+
+    while(!q.empty())
+    {
+        Node* top = q.front();
+        cout << top->data << " ";
+        q.pop();
+
+        if(top->left != nullptr)
+        {
+            q.push(top->left);
+        }
+
+        if(top->right != nullptr)
+        {
+            q.push(top->right);
+        }
     }
 }
 
-int main() {
+int main()
+{
     Node* root = nullptr;
-
-    // Insert nodes
     root = insert(root, 10);
     root = insert(root, 20);
     root = insert(root, 30);
-    root = insert(root, 40);
-    root = insert(root, 50);
-    root = insert(root, 25);
 
-    cout << "In-order traversal of the AVL tree is: ";
-    inOrder(root);
-    cout << endl;
+    root = del_node(root , 30);
 
-    // Delete nodes
-    root = deleteNode(root, 10);
-    cout << "In-order traversal after deletion is: ";
-    inOrder(root);
-    cout << endl;
 
-    return 0;
+    bfs(root);
+
 }

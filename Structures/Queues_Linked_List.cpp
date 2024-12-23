@@ -9,14 +9,14 @@ struct node
     node (int val) : data(val) , next(nullptr) {}
 };
 
-class queue
+class Queue
 {
     private:
     node* front;
     node* rear;
 
     public:
-    queue() : front(nullptr) , rear(nullptr) {}
+    Queue() : front(nullptr) , rear(nullptr) {}
 
     void enqueue(int val)
     {
@@ -94,7 +94,7 @@ class queue
 
 int main()
 {
-    queue q;
+    Queue q;
     q.enqueue(1);
     q.enqueue(2);
     q.enqueue(3);

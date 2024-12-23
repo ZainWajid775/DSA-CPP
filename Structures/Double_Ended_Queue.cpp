@@ -10,7 +10,7 @@ struct node
     node(int val) : data(val) , next(nullptr) , prev(nullptr) {}
 };
 
-class deque
+class my_deque
 {
     private:
     node* front;
@@ -18,7 +18,7 @@ class deque
     int size;
 
     public:
-    deque()
+    my_deque()
     {
         front = rear = nullptr;
         size = 0;
@@ -139,7 +139,7 @@ class deque
 
 int main()
 {
-    deque d;
+    my_deque d;
     d.insert_front(2);
     d.insert_end(4);
     d.insert_end(5);

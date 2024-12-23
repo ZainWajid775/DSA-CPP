@@ -165,6 +165,7 @@ int main()
     list.insert_at_end(3);
     list.insert_at_end(4);
     list.insert_at_end(5);
+    list.insert_at_index(3 , 100);
 
     list.print();
 

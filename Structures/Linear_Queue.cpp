@@ -2,7 +2,7 @@
 
 using namespace std;
 
-class queue
+class Queue
 {
     private:
     int front;
@@ -11,9 +11,9 @@ class queue
     int capacity;
 
     public:
-    queue(int cap) : capacity(cap) , front(0) , rear(0) , arr(new int [cap]) {}
+    Queue(int cap) : capacity(cap) , front(0) , rear(0) , arr(new int [cap]) {}
 
-    ~queue()
+    ~Queue()
     {
         delete[] arr;
     }
@@ -71,7 +71,7 @@ class queue
 
 int main()
 {
-    queue q(10);
+    Queue q(10);
     q.enqueue(1);
     q.enqueue(2);
     q.enqueue(3);

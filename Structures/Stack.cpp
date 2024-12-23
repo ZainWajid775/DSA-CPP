@@ -2,7 +2,7 @@
 #include <stdexcept>
 using namespace std;
 
-class stack
+class Stack
 {
     private:
     int* arr;
@@ -10,14 +10,14 @@ class stack
     int top;
 
     public:
-    stack(int capacity)
+    Stack(int capacity)
     {
         this->capacity = capacity;
         arr = new int[capacity];
         top = -1;
     }
 
-    ~stack()
+    ~Stack()
     {
         delete[] arr;
     }
@@ -48,7 +48,7 @@ class stack
 
     bool is_full()
     {
-        if(top - 1 == capacity)
+        if(top == capacity)
         {
             return 1;
         }
@@ -112,19 +112,12 @@ class stack
 
 int main()
 {
-    try
-    {
-        stack stack(10);
-        stack.push(1);
-        stack.push(2);
-        stack.push(3);
-        stack.size();
-        stack.print();
-    }
-    catch(const std::exception& e)
-    {
-        cerr << e.what() << endl;
-    }
+    
+    Stack stack(1);
+    stack.push(1);
+    stack.size();
+    stack.print();
+
     
 
 }

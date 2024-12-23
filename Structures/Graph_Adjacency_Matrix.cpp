@@ -65,6 +65,56 @@ class Graph
             }
         }
 
+        void bfs(int source)
+        {
+            bool *visited = new bool[num_vertices];
+            queue<int> q;
+
+            q.push(source);
+            visited[source] = true;
+
+            while(!q.empty())
+            {
+                int top = q.front();
+                cout << top << " ";
+                q.pop();
+
+                for(int i = 0 ; i < num_vertices ; i++)
+                {
+                    if(adj_matrix[top][i] != 0 && !visited[i])
+                    {
+                        q.push(i);
+                        visited[i] = true;
+                    }
+                }
+            }
+
+            delete[] visited;
+        }
+
+        void dfs_helper(vector<bool> &visited , int source)
+        {
+            visited[source] = true;
+            cout << source << " ";
+
+            for(int i = 0 ; i < num_vertices ; i++)
+            {
+                if(adj_matrix[source][i] != 0 && !visited[i])
+                {
+                    dfs_helper(visited , i);
+                }
+            }
+        }
+
+        void dfs(int source)
+        {
+            vector<bool> visited(num_vertices , false);
+            dfs_helper(visited , source);
+
+        }
+
+
+
 };
 
 int main() 
@@ -73,11 +123,13 @@ int main()
 
     // Add edges
     g.add_edge(0, 1);
-    g.add_edge(0, 4, 2);
+    g.add_edge(0, 4);
     g.add_edge(1, 2);
-    g.add_edge(1, 3, 3);
+    g.add_edge(1, 3);
     g.add_edge(1, 4);
 
     cout << "Adjacency Matrix:\n";
-    g.display_matrix();
+    g.bfs(0);
+    cout << endl;
+    g.dfs(0);
 }

@@ -11,13 +11,13 @@ struct node
     node(int val) : data(val) , next(nullptr) {}
 };
 
-class stack
+class Stack
 {
     private:
     node* top;
 
     public:
-    stack() : top(nullptr) {}
+    Stack() : top(nullptr) {}
 
     void push(int val)
     {
@@ -91,7 +91,7 @@ class stack
 
 int main()
 {
-    stack stack;
+    Stack stack;
     stack.push(1);
     stack.push(2);
     stack.push(3);

@@ -9,7 +9,7 @@ void selection_sort(int * arr , int size)
     {
         int min_index = i;
 
-        for(int j = i + 1 ; j < size ; j++)
+        for(int j = i ; j < size ; j++)
         {
             if(arr[j] < arr[min_index])
             {
